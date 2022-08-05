@@ -1,0 +1,241 @@
+<main class="container mb-5" *ngIf="selectedQuestionId == 0">
+  <div class="d-flex align-items-center p-3 my-3 rounded shadow-sm bg-light">
+    <div class="lh-1">
+      <h1>Quiz: {{ quiz.title }}</h1>
+    </div>
+    <div class="col text-right">
+      <a class="quiz-title" [routerLink]="['/quiz']" (click)="backToQuizList()">Back to Quiz list</a>
+    </div>
+  </div>
+
+  <div class="bg-light p-3 rounded mt-3">
+    <div class="row">
+      <div class="col"><h3>Questions</h3></div>
+      <div class="col">
+        <div class="text-right">
+          <button
+            *ngIf="!quiz.isPubslished"
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            (click)="addNew()"
+          >
+            Add New
+          </button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Statement</th>
+            <!-- <th scope="col">Multi Answer</th> -->
+            <th scope="col col-action-buttons"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngFor="let item of questionService.records$ | async; let i = index"
+          >
+            <tr *ngIf="item.id !== 0">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>
+                <div class="question-statement" (click)="question_Click(item)">
+                  {{ item.statement }}
+                </div>
+              </td>
+              <!-- <td>
+                <i *ngIf="item.hasMultipleAnswers" class="fa fa-check"></i>
+              </td> -->
+              <td>
+                <div class="action-icons d-block">
+                  <i
+                    class="fa fa-solid fa-pen-to-square ng-star-inserted"
+                    title="Edit"
+                    (click)="question_Click(item)"
+                  ></i>
+                  <i
+                    class="fa fa-trash-can"
+                    title="Delete"
+                    (click)="delete(item.id)"
+                  ></i>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<main class="container mb-5" *ngIf="selectedQuestionId != 0">
+  <div class="d-flex align-items-center p-3 my-3 rounded shadow-sm bg-light">
+    <div class="lh-1">
+      <h1>Question Detail</h1>
+    </div>
+    <div class="col text-right">
+      <a class="quiz-title" (click)="selectedQuestionId = 0"
+        >Back to Question list</a
+      >
+    </div>
+  </div>
+  <div class="bg-light p-3 rounded mt-3">
+    <ng-container *ngIf="this.questionService.formState$ | async as vm">
+      <form [ngrxFormState]="vm">
+        <h5 class="my-2">Question Statement</h5>
+        <div class="row">
+          <div class="col col-8">
+            <textarea
+              type="text"
+              class="form-control"
+              [ngrxFormControlState]="vm.controls.statement"
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col col-8 pl-5 my-4">
+            <h5>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [ngrxFormControlState]="vm.controls.hasMultipleAnswers"
+                id="hasMultipleAnswers"
+              />
+              <label class="form-check-label" for="hasMultipleAnswers">
+                Has Multiple Answers
+              </label>
+            </h5>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col col-8">
+            <table class="table answer-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Answer Statement</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container
+                  *ngIf="
+                    vm.value.answers == undefined ||
+                    vm.value.answers.length == 0
+                  "
+                >
+                  <tr>
+                    <td class="text-center" [colSpan]="3">
+                      No record(s) found
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    vm.value.answers != undefined && vm.value.answers.length > 0
+                  "
+                >
+                  <tr
+                    *ngFor="
+                      let answer of vm.controls.answers.controls;
+                      let i = index
+                    "
+                  >
+                    <td>
+                      <ng-container *ngIf="vm.value.hasMultipleAnswers">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="answer{{ i }}"
+                            name="flexRadioDefault"
+                            [ngrxFormControlState]="answer.controls.isCorrect"
+                          />
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!vm.value.hasMultipleAnswers">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            id="answer{{ i }}"
+                            name="flexRadioDefault"
+                            value="{{ i }}"
+                            [ngrxFormControlState]="vm.controls.correctAnswer"
+                          />
+                        </div>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <div class="text-left">
+                        <label for="answer{{ i }}">
+                          {{ answer.value.statement }}
+                        </label>
+                      </div>
+                    </td>
+                    <td>
+                      <i
+                        class="fa fa-trash-can fa-small"
+                        (click)="deleteAnswer(answer.value)"
+                        title="Delete"
+                        *ngIf="quiz.isPubslished != true"
+                      ></i>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+    <div class="row">
+      <div class="col col-8">
+        <textarea
+          type="text"
+          class="form-control"
+          [(ngModel)]="answerStatement"
+          *ngIf="quiz.isPubslished != true"
+          rows="2"
+        ></textarea>
+        <button
+          type="button"
+          class="btn btn-link"
+          *ngIf="quiz.isPubslished != true"
+          (click)="addAnswer()"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-primary btn-lg mx-2"
+          (click)="save()"
+          *ngIf="quiz.isPubslished != true"
+        >
+          Save
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary btn-lg mx-2"
+          (click)="cancel()"
+          *ngIf="quiz.isPubslished != true"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

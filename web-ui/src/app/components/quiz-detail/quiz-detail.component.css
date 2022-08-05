@@ -1,0 +1,37 @@
+.col-action-buttons{
+  max-width: 5%;
+}
+
+
+i.fa {
+  cursor: pointer;
+  margin: 0 10px;
+}
+i.fa-small{
+  font-size: 0.8em;
+}
+i.fa.size2{
+  font-size: 1.4em;
+  margin-top: 5px;
+}
+
+table tr th:last-child, table tr td:last-child{
+  text-align: right;
+  width: 20px;
+}
+
+.action-icons{
+  min-width: 80px;
+  width: 80px;
+}
+
+
+.table thead th{
+  border-top: 0;
+}
+
+
+table.answer-table tr th:first-child, table.answer-table tr td:first-child{
+  text-align: right;
+  width: 20px;
+}

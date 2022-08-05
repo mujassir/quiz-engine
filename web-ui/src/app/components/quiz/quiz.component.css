@@ -1,0 +1,35 @@
+.col-action-buttons{
+  max-width: 5%;
+}
+
+
+i.fa {
+  cursor: pointer;
+  margin: 0 10px;
+  color: black;
+}
+
+i.fa.size2{
+  font-size: 1.4em;
+  margin-top: 5px;
+}
+
+
+table tr th:last-child, table tr td:last-child{
+  text-align: right;
+}
+
+.quiz-title{
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action-icons{
+min-width: 150px;
+width: 100%;
+}
+
+
+.table thead th{
+  border-top: 0;
+}

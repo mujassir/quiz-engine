@@ -1,0 +1,115 @@
+<main class="container mb-5">
+  <div class="d-flex align-items-center p-3 my-3 rounded shadow-sm bg-light">
+    <div class="lh-1">
+      <h1>Manage Quizzes</h1>
+    </div>
+  </div>
+
+  <div class="bg-light p-3 rounded mt-3">
+    <div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Published</th>
+            <th scope="col">Publish Date</th>
+            <th scope="col">Publish Id</th>
+            <th scope="col col-action-buttons">
+              <div class="text-right">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#exampleModal"
+                  (click)="state.addNew()"
+                >
+                  Add New
+                </button>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let item of state.records$ | async;">
+
+            <tr *ngIf="!allowEdit(item)">
+              <td>
+                <a
+                  class="quiz-title"
+                  [routerLink]="['/quiz-detail']"
+                  [queryParams]="{ quizId: item.id }"
+                  queryParamsHandling="merge"
+                >
+                  {{ item.title }}
+                </a>
+              </td>
+              <td>
+                <i *ngIf="item.isPubslished" class="fa fa-check"></i>
+              </td>
+              <td>{{ item.publishedDate | date: "mediumDate" }}</td>
+              <td>
+                <a
+                  class="quiz-title"
+                  [routerLink]="['/attempt-quiz']"
+                  [queryParams]="{ publishId: item.pubslishedId }"
+                  queryParamsHandling="merge"
+                  target="_blank"
+                >
+                  {{ item.pubslishedId }}
+                </a>
+              </td>
+              <td>
+                <div class="action-icons d-block">
+                  <i
+                    *ngIf="!item.isPubslished"
+                    class="fa fa-solid fa-cloud-arrow-up"
+                    title="Publish"
+                    (click)="publish(item)"
+                  ></i>
+                  <i
+                    *ngIf="!item.isPubslished"
+                    class="fa fa-solid fa-pen-to-square"
+                    title="Edit"
+                    (click)="edit(item)"
+                  ></i>
+                  <a
+                    [routerLink]="['/quiz-detail']"
+                    [queryParams]="{ quizId: item.id }"
+                    queryParamsHandling="merge"
+                  >
+                    <i class="fa fa-solid fa-list" title="Questions"></i>
+                  </a>
+                  <i
+                    class="fa fa-trash-can"
+                    title="Delete"
+                    (click)="delete(item.id)"
+                  ></i>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="allowEdit(item)">
+              <td>
+                <ng-container *ngIf="this.state.formState$ | async as vm">
+                  <form [ngrxFormState]="vm"></form>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [placeholder]="'Title'"
+                    [ngrxFormControlState]="vm.controls.title"
+                  />
+                </ng-container>
+              </td>
+              <td>
+                <i class="fa fa-check size2" (click)="save()"></i>
+                <i class="fa fa-xmark size2" (click)="cancel()"></i>
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>

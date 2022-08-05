@@ -1,0 +1,12 @@
+
+
+
+<main class="container mb-5">
+  <div class="bg-light p-5 rounded mt-3">
+    <h1>Welcome, {{ currentUser.firstName  }} {{ currentUser.lastName  }}</h1>
+
+    <div class="col text-right">
+      <a class="quiz-title" [routerLink]="['/quiz']">Back to Quiz list</a>
+    </div>
+  </div>
+</main>
